@@ -17,7 +17,6 @@ ViewsRouter.get("/inicio", async (req, res) => {
 })
 
 ViewsRouter.get("/products", async (req, res) => {
-    console.log(req.session.email);
     if (!req.session.email) {
         res.redirect("/login")
     }
@@ -80,11 +79,9 @@ ViewsRouter.get("/profile", async (req, res) => {
         let userJson = JSON.stringify(req.session.user)
         let user = req.session.user
         let email = user.email
-        console.log(`el usuario de la session /profile: ${userJson}`);
-        console.log(`el email de la session /profile: ${email}`);
+
         if (!user || !user.email) {
             res.redirect("/login")
-            console.log("entre en el if de /profile")
         }
         const userData = {
             email: user.email,
@@ -104,14 +101,7 @@ ViewsRouter.get("/profile", async (req, res) => {
 
 ViewsRouter.get("/current", async (req, res) => {
     try {
-        // let userJson = JSON.stringify(req.session.user)
         let user = req.session.user
-        let email = user.email
-        let name = user.name
-        // console.log(`el nombre de la session /current: ${name}`);
-        // console.log(`el usuario json de la session /current: ${userJson}`);
-        // console.log(`el email de la session /current: ${email}`);
-        // console.log(`el usuario de la session /current: ${user}`);
 
         if (!user) {
             res.redirect("/login")

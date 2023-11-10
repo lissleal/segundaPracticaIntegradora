@@ -8,7 +8,6 @@ const user = new UserManager()
 UserRouter.post("/register", passport.authenticate("register", { failureRedirect: "/failregister" }), async (req, res) => {
     try {
         const { name, surname, email, password, role } = req.body
-        console.log(name + surname + email + password + role);
         if (!name || !surname || !email || !password || !role) {
             res.status(400).send("Faltan datos")
         }
@@ -27,10 +26,6 @@ UserRouter.get("/failregister", async (req, res) => {
 UserRouter.post("/login", passport.authenticate("login", { failureRedirect: "/faillogin" }), async (req, res) => {
     try {
         let user = req.user
-        console.log("El email del user es " + user.email);
-        console.log("El role del user es " + user.role);
-
-        console.log(`el user del post login: ${user}`);
 
         if (user.role === "admin") {
             req.session.email = user.email
@@ -86,9 +81,7 @@ UserRouter.get("/githubcallback", passport.authenticate("github", { failureRedir
         req.session.role = req.user.role;
 
         res.redirect("/profile");
-        console.log("Session established:", req.session.user);
     } catch (error) {
-        console.error("Error in GitHub callback route:", error);
         res.status(500).json("Error during GitHub authentication");
     }
 })
