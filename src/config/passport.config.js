@@ -54,8 +54,10 @@ const initializePassport = () => {
             if (!isValid) {
                 return done(null, false, { message: "Wrong password" });
             }
+            console.log("Login successful. Authenticated user:", user);
             return done(null, user);
         } catch (error) {
+            console.error("Error in login strategy:", error);
             return done(error);
         }
     }))

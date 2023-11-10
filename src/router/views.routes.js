@@ -10,7 +10,14 @@ const user = new UserManager()
 
 //Rutas GET para la página de inicio y detalles del producto:
 
+ViewsRouter.get("/inicio", async (req, res) => {
+    res.render("inicio", {
+        title: "App de compras",
+    })
+})
+
 ViewsRouter.get("/products", async (req, res) => {
+    console.log(req.session.email);
     if (!req.session.email) {
         res.redirect("/login")
     }
@@ -31,6 +38,7 @@ ViewsRouter.get("/products", async (req, res) => {
 
     })
 })
+
 
 ViewsRouter.get("/products/:id", async (req, res) => {
 
@@ -68,24 +76,63 @@ ViewsRouter.get("/login", (req, res) => {
 })
 
 ViewsRouter.get("/profile", async (req, res) => {
-    let userJson = JSON.stringify(req.session.user)
-    let user = req.session.user
-    let email = user.email
-    console.log(`el usuario de la session /profile: ${userJson}`);
-    console.log(`el email de la session /profile: ${email}`);
-    if (!email) {
-        res.redirect("/login")
-        console.log("entre en el if de /profile")
-    }
-    const userData = {
-        email: email,
-        role: "admin"
-    }
+    try {
+        let userJson = JSON.stringify(req.session.user)
+        let user = req.session.user
+        let email = user.email
+        console.log(`el usuario de la session /profile: ${userJson}`);
+        console.log(`el email de la session /profile: ${email}`);
+        if (!user || !user.email) {
+            res.redirect("/login")
+            console.log("entre en el if de /profile")
+        }
+        const userData = {
+            email: user.email,
+            role: user.role,
+        }
 
-    res.render("profile", {
-        title: "Perfil de Usuario",
-        user: userData
-    })
+        res.render("profile", {
+            title: "Perfil de Usuario",
+            user: userData
+        })
+    }
+    catch (error) {
+        console.error("Error en la ruta /profile:", error);
+        res.status(500).json(error);
+    }
+})
+
+ViewsRouter.get("/current", async (req, res) => {
+    try {
+        // let userJson = JSON.stringify(req.session.user)
+        let user = req.session.user
+        let email = user.email
+        let name = user.name
+        // console.log(`el nombre de la session /current: ${name}`);
+        // console.log(`el usuario json de la session /current: ${userJson}`);
+        // console.log(`el email de la session /current: ${email}`);
+        // console.log(`el usuario de la session /current: ${user}`);
+
+        if (!user) {
+            res.redirect("/login")
+        }
+        const userData = {
+            name: user.name,
+            surname: user.surname,
+            age: user.age,
+            email: user.email,
+            role: user.role
+        }
+
+        res.render("current", {
+            title: "Perfil de Usuario",
+            user: userData
+        })
+    }
+    catch (error) {
+        console.error("Error en la ruta /current:", error);
+        res.status(500).json(error);
+    }
 })
 
 export default ViewsRouter

@@ -27,6 +27,8 @@ UserRouter.get("/failregister", async (req, res) => {
 UserRouter.post("/login", passport.authenticate("login", { failureRedirect: "/faillogin" }), async (req, res) => {
     try {
         let user = req.user
+        console.log("El email del user es " + user.email);
+        console.log("El role del user es " + user.role);
 
         console.log(`el user del post login: ${user}`);
 
@@ -35,6 +37,8 @@ UserRouter.post("/login", passport.authenticate("login", { failureRedirect: "/fa
             req.session.role = user.role
             req.session.name = user.name
             req.session.surname = user.surname
+            req.session.age = user.age;
+            req.session.user = user;
             res.redirect("/profile")
 
         } else {
@@ -42,8 +46,12 @@ UserRouter.post("/login", passport.authenticate("login", { failureRedirect: "/fa
             req.session.role = user.role
             req.session.name = user.name
             req.session.surname = user.surname
+            req.session.age = user.age;
+            req.session.user = user;
             res.redirect("/products")
         }
+        console.log("Session established:", req.session.user);
+
 
         if (!user) {
             res.status(400).send("Wrong credentials")
@@ -67,11 +75,22 @@ UserRouter.get("/logout", async (req, res) => {
     }
 })
 
-UserRouter.get("/github", passport.authenticate("github", { scope: ["user: email"] }), async (req, res) => { })
+UserRouter.get("/github", passport.authenticate("github", { scope: ["user: email"] }), async (req, res) => {
+    console.log("Redirecting to GitHub for authentication...")
+})
 
 UserRouter.get("/githubcallback", passport.authenticate("github", { failureRedirect: "/login" }), async (req, res) => {
-    req.session.user = req.user
-    res.redirect("/profile")
+    try {
+        req.session.user = req.user;
+        req.session.email = req.user.email;
+        req.session.role = req.user.role;
+
+        res.redirect("/profile");
+        console.log("Session established:", req.session.user);
+    } catch (error) {
+        console.error("Error in GitHub callback route:", error);
+        res.status(500).json("Error during GitHub authentication");
+    }
 })
 
 

@@ -50,8 +50,8 @@ app.use(session({
         ttl: 600
     }),
     secret: "secret",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
 }))
 
 //Configuración de passport:
